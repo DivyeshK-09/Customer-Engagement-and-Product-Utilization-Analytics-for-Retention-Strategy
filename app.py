@@ -1,8 +1,3 @@
-"""
-European Bank — Customer Retention Intelligence Dashboard
-Main entry point. Run with: streamlit run app.py
-"""
-
 import streamlit as st
 import pandas as pd
 import plotly.express as px
@@ -25,13 +20,10 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# ----------------------------------------------------------------------
-# Theme — deliberate palette, not Streamlit defaults
-# ----------------------------------------------------------------------
-PRIMARY = "#0B3D2E"       # deep bank-vault green
-ACCENT = "#C99A4A"        # muted brass/gold — "premium" cue
-RISK = "#B0413E"          # brick red for churn/risk
-SAFE = "#3E7C59"          # sage green for retention
+PRIMARY = "#0B3D2E"
+ACCENT = "#C99A4A"
+RISK = "#B0413E"
+SAFE = "#3E7C59"
 NEUTRAL = "#6B6F76"
 BG_CARD = "#F7F5F0"
 
@@ -79,16 +71,9 @@ st.markdown(CUSTOM_CSS, unsafe_allow_html=True)
 PLOTLY_TEMPLATE = "plotly_white"
 COLOR_RISK_SAFE = {0: SAFE, 1: RISK}
 
-
-# ----------------------------------------------------------------------
-# Load data
-# ----------------------------------------------------------------------
 raw_df = load_data("European_Bank.csv")
 full_df = add_derived_fields(raw_df)
 
-# ----------------------------------------------------------------------
-# Sidebar — global filters (apply across all modules in this session)
-# ----------------------------------------------------------------------
 st.sidebar.markdown("## \U0001F3E6 European Bank")
 st.sidebar.markdown("**Retention Intelligence Platform**")
 st.sidebar.markdown("---")
@@ -133,7 +118,6 @@ st.sidebar.caption(
     "Germany, and Spain. Filters apply to every module below."
 )
 
-# Apply filters
 df = full_df[
     full_df["Geography"].isin(geo_filter)
     & full_df["Gender"].isin(gender_filter)
@@ -152,10 +136,6 @@ if len(df) == 0:
     st.warning("No customers match the current filter combination. Loosen a filter in the sidebar to see results.")
     st.stop()
 
-
-# ----------------------------------------------------------------------
-# Header
-# ----------------------------------------------------------------------
 st.markdown('<p class="module-eyebrow">Engagement vs Churn Overview</p>', unsafe_allow_html=True)
 st.title("Customer Retention Intelligence")
 st.caption(
@@ -163,9 +143,6 @@ st.caption(
     "Other modules are in the sidebar navigation above this page."
 )
 
-# ----------------------------------------------------------------------
-# Top KPI row
-# ----------------------------------------------------------------------
 overall_churn = df["Exited"].mean()
 err = kpi_engagement_retention_ratio(df)
 hbd = kpi_high_balance_disengagement(df)
@@ -183,9 +160,6 @@ c5.metric("Credit Card Stickiness Score", f"{ccss['score']:.2f}\u00d7",
 
 st.markdown("---")
 
-# ----------------------------------------------------------------------
-# Engagement profile breakdown
-# ----------------------------------------------------------------------
 left, right = st.columns([1.1, 1])
 
 with left:
@@ -235,9 +209,6 @@ with right:
 
 st.markdown("---")
 
-# ----------------------------------------------------------------------
-# Active vs Inactive headline comparison
-# ----------------------------------------------------------------------
 st.subheader("Activity status: the single strongest engagement signal")
 act_col1, act_col2 = st.columns(2)
 
