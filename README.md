@@ -13,6 +13,10 @@ Using a dataset of 10,000 European bank customers across France, Germany, and Sp
 
 The project delivers a full analytical pipeline: from raw data validation through KPI design, engagement segmentation, and a live interactive dashboard — with a companion research paper and executive summary for policy stakeholders.
 
+
+https://uf4499jn4tewwbty6txncx.streamlit.app/
+
+
 ---
 
 ## Key Findings
