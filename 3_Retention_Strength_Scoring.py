@@ -1,5 +1,3 @@
-"""Module: Retention Strength Scoring Panels"""
-
 import streamlit as st
 import pandas as pd
 import plotly.express as px
@@ -52,7 +50,6 @@ is actually associated with high churn, so the index treats 2 products as
 shows the largest single retention gap of any field tested in this dataset.
 """, unsafe_allow_html=True)
 
-# --- Tier overview ---
 st.subheader("Churn rate by RSI tier")
 tiers = kpi_relationship_strength(full_df)
 fig = px.bar(
@@ -76,7 +73,6 @@ st.caption(
 
 st.markdown("---")
 
-# --- Interactive scoring panel ---
 st.subheader("Score a customer profile")
 st.caption("Use the controls below to see how engagement and product choices move the RSI score and the implied churn risk tier.")
 
@@ -140,7 +136,6 @@ Customers in this tier of the actual dataset churn at approximately
 
 st.markdown("---")
 
-# --- Distribution ---
 st.subheader("RSI distribution across the customer base")
 fig3 = px.histogram(
     full_df, x="RelationshipStrengthIndex", color="Exited", nbins=25,
