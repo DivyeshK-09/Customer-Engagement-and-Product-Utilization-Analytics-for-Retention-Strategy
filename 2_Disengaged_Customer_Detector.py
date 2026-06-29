@@ -1,5 +1,3 @@
-"""Module: High-Value Disengaged Customer Detector"""
-
 import streamlit as st
 import pandas as pd
 import plotly.express as px
@@ -29,7 +27,6 @@ st.caption(
     "relationship with the bank \u2014 the highest silent-churn risk."
 )
 
-# --- Threshold controls ---
 st.subheader("Define \u201cpremium\u201d and \u201cdisengaged\u201d for this search")
 c1, c2, c3 = st.columns(3)
 with c1:
@@ -106,7 +103,6 @@ with right:
 
 st.markdown("---")
 
-# --- Salary-balance mismatch ---
 st.subheader("Salary\u2013balance mismatch: high earners parking little with this bank")
 mismatch_n = full_df["SalaryBalanceMismatch"].sum()
 mismatch_churn = full_df.loc[full_df["SalaryBalanceMismatch"], "Exited"].mean() if mismatch_n else float("nan")
