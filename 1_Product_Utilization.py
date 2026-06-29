@@ -1,5 +1,3 @@
-"""Module: Product Utilization Impact Analysis"""
-
 import streamlit as st
 import pandas as pd
 import plotly.express as px
@@ -44,7 +42,6 @@ st.caption(
     "only up to a point \u2014 and then sharply not."
 )
 
-# --- Headline curve ---
 pdi = kpi_product_depth(df)
 st.subheader("Churn rate by number of products held")
 
@@ -101,7 +98,6 @@ with col2:
 
 st.markdown("---")
 
-# --- Product mix x engagement ---
 st.subheader("Product depth and engagement, combined")
 st.caption("Does activity status change the product-count story? Yes — and the cliff at 3-4 products holds regardless of activity.")
 
@@ -117,7 +113,6 @@ st.plotly_chart(fig3, use_container_width=True)
 
 st.markdown("---")
 
-# --- Raw table ---
 with st.expander("View underlying product-tier data table"):
     st.dataframe(
         pdi.style.format({"ChurnRate": "{:.1%}", "RetentionRate": "{:.1%}", "Customers": "{:,}"}),
