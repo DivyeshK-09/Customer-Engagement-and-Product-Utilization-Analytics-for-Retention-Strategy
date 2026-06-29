@@ -1,26 +1,12 @@
-"""
-Shared data loading, engagement classification, and KPI calculation utilities
-for the European Bank Customer Retention Intelligence dashboard.
-
-All KPI formulas here are documented and intended to match the companion
-research paper exactly — if you change a formula, update the paper too.
-"""
-
 import pandas as pd
 import numpy as np
 import streamlit as st
-
-
-# ----------------------------------------------------------------------
-# Data loading & validation
-# ----------------------------------------------------------------------
 
 @st.cache_data
 def load_data(path: str = "European_Bank.csv") -> pd.DataFrame:
     """Load and validate the bank customer dataset."""
     df = pd.read_csv(path)
 
-    # Schema validation
     expected_binary = ["HasCrCard", "IsActiveMember", "Exited"]
     for col in expected_binary:
         bad = ~df[col].isin([0, 1])
@@ -33,13 +19,11 @@ def load_data(path: str = "European_Bank.csv") -> pd.DataFrame:
     expected_gender = {"Male", "Female"}
     df = df[df["Gender"].isin(expected_gender)]
 
-    # Drop impossible values
     df = df[(df["Age"] >= 18) & (df["Age"] <= 100)]
     df = df[df["NumOfProducts"].between(1, 4)]
     df = df[df["Balance"] >= 0]
     df = df[df["EstimatedSalary"] >= 0]
 
-    # Drop exact duplicate customers
     df = df.drop_duplicates(subset="CustomerId")
 
     df = df.reset_index(drop=True)
@@ -62,7 +46,6 @@ def add_derived_fields(df: pd.DataFrame) -> pd.DataFrame:
     df["MultiProduct"] = df["NumOfProducts"] >= 2
     df["OverLeveragedProduct"] = df["NumOfProducts"] >= 3  # churn-cliff zone
 
-    # --- Engagement Classification (per brief) ---
     def classify(row):
         active = row["IsActiveMember"] == 1
         if active and row["MultiProduct"]:
@@ -75,22 +58,12 @@ def add_derived_fields(df: pd.DataFrame) -> pd.DataFrame:
 
     df["EngagementProfile"] = df.apply(classify, axis=1)
 
-    # --- Salary–balance mismatch flag ---
-    # High salary but near-zero balance: earns well, parks little with this bank
     df["SalaryBalanceMismatch"] = df["HighSalary"] & (~df["HasBalance"])
 
-    # --- At-risk premium customer flag ---
-    # High balance AND high salary AND disengaged (inactive)
     df["AtRiskPremium"] = (
         df["HighBalance"] & df["HighSalary"] & (df["IsActiveMember"] == 0)
     )
 
-    # --- Relationship Strength Index (0-100) ---
-    # Weighted composite: activity (40) + product depth capped at 2 (30)
-    # + tenure (15) + card ownership (15).
-    # Product benefit is CAPPED at 2 products deliberately: churn rises
-    # sharply at 3-4 products in this dataset (likely forced/complaint-driven
-    # cross-sell, not genuine relationship depth) — see research paper.
     df["RelationshipStrengthIndex"] = (
         (df["IsActiveMember"] * 40)
         + (df["NumOfProducts"].clip(upper=2) / 2 * 30)
@@ -111,11 +84,6 @@ def add_derived_fields(df: pd.DataFrame) -> pd.DataFrame:
     df["RSI_Tier"] = df["RelationshipStrengthIndex"].apply(rsi_tier)
 
     return df
-
-
-# ----------------------------------------------------------------------
-# KPI calculations
-# ----------------------------------------------------------------------
 
 def kpi_engagement_retention_ratio(df: pd.DataFrame) -> dict:
     """Retention rate of active members vs inactive members (ratio > 1
